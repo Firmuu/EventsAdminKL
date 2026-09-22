@@ -1,0 +1,1367 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0a0a0b">
+<meta name="color-scheme" content="dark light">
+<title>KL | Events — Команды сервера</title>
+<meta name="description" content="Список всех команд на сервере KL | Events: игровые, админские, кастомные предметы, плагины. Сделано Firmuu.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="icon" sizes="any" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23eab308'/><text x='50' y='72' font-size='64' font-family='Inter,sans-serif' font-weight='800' fill='white' text-anchor='middle'>E</text></svg>">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --bg:#0a0a0b;
+  --bg-1:#0f0f11;
+  --bg-2:#141416;
+  --bg-3:#1a1a1d;
+  --border:#1f1f23;
+  --border-2:#2a2a30;
+  --border-3:#3a3a42;
+  --text:#f5f5f7;
+  --text-2:#b4b4bc;
+  --text-3:#7a7a84;
+  --text-4:#55555e;
+  --accent:#eab308;
+  --accent-2:#facc15;
+  --accent-soft:rgba(234,179,8,0.10);
+  --accent-border:rgba(234,179,8,0.35);
+  --danger:#ef4444;
+  --danger-soft:rgba(239,68,68,0.1);
+  --success:#22c55e;
+  --success-soft:rgba(34,197,94,0.1);
+
+  --radius-xs:4px;
+  --radius-sm:6px;
+  --radius:8px;
+  --radius-lg:12px;
+
+  --font:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  --mono:'JetBrains Mono','SF Mono',Menlo,Consolas,monospace;
+
+  --header-h:64px;
+  --max-w:1200px;
+  --transition:0.16s cubic-bezier(0.4,0,0.2,1);
+
+  --arrow-mask:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'><path d='M5 12h14'/><path d='m12 5 7 7-7 7'/></svg>");
+}
+
+html[data-theme="light"]{
+  --bg:#fafaf9;
+  --bg-1:#ffffff;
+  --bg-2:#f5f5f4;
+  --bg-3:#eeeeec;
+  --border:#e7e5e4;
+  --border-2:#d6d3d1;
+  --border-3:#a8a29e;
+  --text:#0c0a09;
+  --text-2:#44403c;
+  --text-3:#78716c;
+  --text-4:#a8a29e;
+  --accent-soft:rgba(234,179,8,0.14);
+  --accent-border:rgba(234,179,8,0.45);
+  --danger-soft:rgba(239,68,68,0.12);
+  --success-soft:rgba(34,197,94,0.14);
+}
+
+html{
+  scroll-behavior:smooth;
+  scroll-padding-top:calc(var(--header-h) + 24px);
+  -webkit-text-size-adjust:100%;
+}
+
+body{
+  font-family:var(--font);
+  font-size:15px;
+  line-height:1.65;
+  color:var(--text);
+  background:var(--bg);
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  font-feature-settings:'cv11','ss01','ss03';
+  text-rendering:optimizeLegibility;
+  overflow-x:hidden;
+  min-height:100vh;
+  transition:background 0.25s,color 0.25s;
+}
+
+body::before{
+  content:'';position:fixed;inset:0;
+  background:
+    radial-gradient(600px circle at var(--mx,50%) var(--my,20%),
+      rgba(234,179,8,0.10), transparent 40%),
+    linear-gradient(var(--border) 1px, transparent 1px) 0 0/48px 48px,
+    linear-gradient(90deg, var(--border) 1px, transparent 1px) 0 0/48px 48px;
+  -webkit-mask-image:radial-gradient(circle at 50% 0%, #000 20%, transparent 75%);
+          mask-image:radial-gradient(circle at 50% 0%, #000 20%, transparent 75%);
+  pointer-events:none;z-index:0;opacity:0.55;
+}
+html[data-theme="light"] body::before{opacity:0.35}
+.layout,.header,.footer{position:relative;z-index:1}
+
+a{color:inherit;text-decoration:none;transition:color var(--transition),opacity var(--transition)}
+img,svg{display:block;max-width:100%}
+button{font:inherit;cursor:pointer;border:0;background:none;color:inherit;font-family:inherit}
+::selection{background:var(--accent);color:#0a0a0b}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:var(--radius-xs)}
+
+::-webkit-scrollbar{width:12px;height:12px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border-2);border:3px solid var(--bg);border-radius:6px}
+::-webkit-scrollbar-thumb:hover{background:var(--border-3)}
+
+.card-text{color:var(--text-2);font-size:13.5px;line-height:1.55}
+.mt-0{margin-top:0}
+.mt-16{margin-top:16px}
+.mt-24{margin-top:24px}
+.mb-32{margin-bottom:32px}
+
+/* Progress */
+.progress{position:fixed;top:0;left:0;right:0;height:2px;z-index:100;background:transparent;pointer-events:none}
+.progress-bar{height:100%;width:100%;transform:scaleX(0);transform-origin:0 50%;background:var(--accent);will-change:transform;transition:transform 0.1s linear}
+
+/* Header */
+.header{
+  position:sticky;top:0;z-index:90;height:var(--header-h);
+  display:flex;align-items:center;
+  background:color-mix(in srgb, var(--bg) 75%, transparent);
+  backdrop-filter:saturate(180%) blur(16px);
+  -webkit-backdrop-filter:saturate(180%) blur(16px);
+  border-bottom:1px solid var(--border);
+  transition:border-color var(--transition),background 0.25s;
+}
+.header-inner{width:100%;max-width:var(--max-w);margin:0 auto;padding:0 24px;display:flex;align-items:center;gap:14px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:600;font-size:14.5px;letter-spacing:-0.01em;color:var(--text);flex-shrink:0}
+.logo-mark{
+  width:30px;height:30px;display:grid;place-items:center;
+  background:var(--accent);border-radius:var(--radius-sm);
+  font-weight:800;font-size:13px;color:#0a0a0b;letter-spacing:-0.03em;flex-shrink:0;
+  box-shadow:0 0 0 1px rgba(234,179,8,0.4),0 4px 12px rgba(234,179,8,0.3);
+}
+.logo-sep{color:var(--text-4);font-weight:400}
+.logo-sub{color:var(--text-2);font-weight:400;font-size:13.5px}
+
+.header-nav{display:flex;align-items:center;gap:2px;flex:1;justify-content:center;min-width:0}
+.header-nav a{padding:7px 10px;border-radius:var(--radius-sm);font-size:13px;color:var(--text-2);font-weight:500;position:relative;white-space:nowrap}
+.header-nav a:hover{color:var(--text);background:var(--bg-2)}
+.header-nav a.active{color:var(--text);background:var(--bg-2)}
+.header-nav a.active::after{
+  content:'';position:absolute;left:10px;right:10px;bottom:-3px;
+  height:2px;background:var(--accent);border-radius:2px;
+  box-shadow:0 0 8px rgba(234,179,8,0.5);
+}
+
+.header-clock{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:6px 11px;background:var(--bg-2);
+  border:1px solid var(--border);border-radius:100px;
+  font-family:var(--mono);font-size:12px;font-weight:500;
+  color:var(--text-2);flex-shrink:0;
+  font-variant-numeric:tabular-nums;
+}
+.header-clock .dot{
+  width:6px;height:6px;border-radius:50%;background:var(--success);
+  box-shadow:0 0 0 3px rgba(34,197,94,0.15);
+  animation:pulse 2s ease-in-out infinite;
+}
+@keyframes pulse{
+  0%,100%{box-shadow:0 0 0 3px rgba(34,197,94,0.15)}
+  50%{box-shadow:0 0 0 5px rgba(34,197,94,0.05)}
+}
+
+.header-cta{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:8px 12px;background:var(--text);color:var(--bg);
+  border-radius:var(--radius-sm);font-size:13px;font-weight:600;
+  transition:opacity var(--transition),transform var(--transition),background var(--transition),color var(--transition);
+  flex-shrink:0;
+}
+.header-cta:hover{opacity:0.88}
+.header-cta:active{transform:scale(0.98)}
+.header-cta svg{width:11px;height:11px}
+.header-icon-btn{
+  display:grid;place-items:center;width:34px;height:34px;
+  background:var(--bg-2);border:1px solid var(--border-2);
+  border-radius:var(--radius-sm);color:var(--text-2);
+  transition:all var(--transition);flex-shrink:0;
+}
+.header-icon-btn:hover{color:var(--text);border-color:var(--border-3)}
+.header-icon-btn svg{width:15px;height:15px}
+.header-icon-btn.on{color:var(--accent);border-color:var(--accent-border);background:var(--accent-soft)}
+
+.menu-toggle{display:none;width:36px;height:36px;place-items:center;border-radius:var(--radius-sm);color:var(--text);transition:background var(--transition)}
+.menu-toggle:hover{background:var(--bg-2)}
+.menu-toggle svg{width:20px;height:20px}
+
+/* Mobile menu */
+.mobile-menu{
+  display:none;position:fixed;inset:var(--header-h) 0 0 0;
+  background:var(--bg);z-index:80;padding:24px;overflow-y:auto;overscroll-behavior:contain;
+}
+.mobile-menu.open{display:block;animation:fadeIn 0.15s ease}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.mobile-menu-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-3);margin-bottom:12px}
+.mobile-menu a{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 16px;border-radius:var(--radius);font-size:15px;color:var(--text);
+  background:var(--bg-1);border:1px solid var(--border);margin-bottom:8px;font-weight:500;
+  transition:background var(--transition),border-color var(--transition),color var(--transition);
+}
+.mobile-menu a:hover{background:var(--bg-2);border-color:var(--border-2)}
+.mobile-menu a.active{background:var(--accent-soft);border-color:var(--accent-border);color:var(--accent)}
+.mobile-menu a::after{content:'→';color:var(--text-4);font-size:14px;transition:transform var(--transition),color var(--transition)}
+.mobile-menu a:hover::after{transform:translateX(2px);color:var(--accent)}
+
+/* Pinned */
+.pinned-bar{
+  position:fixed;top:var(--header-h);left:0;right:0;z-index:85;
+  background:color-mix(in srgb, var(--bg) 90%, transparent);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--border);
+  padding:8px 32px;display:none;gap:8px;overflow-x:auto;scrollbar-width:none;
+}
+.pinned-bar::-webkit-scrollbar{display:none}
+.pinned-bar.has{display:flex}
+.pinned-bar-label{
+  font-size:11px;color:var(--text-4);font-weight:600;text-transform:uppercase;letter-spacing:0.06em;
+  display:flex;align-items:center;padding-right:8px;border-right:1px solid var(--border);flex-shrink:0;
+}
+.pinned-bar a{
+  padding:6px 12px;background:var(--bg-2);border:1px solid var(--border-2);border-radius:100px;
+  font-size:12.5px;font-weight:500;color:var(--text-2);white-space:nowrap;
+  transition:all var(--transition);display:inline-flex;align-items:center;gap:6px;
+}
+.pinned-bar a:hover{border-color:var(--accent-border);color:var(--accent);background:var(--accent-soft)}
+.pinned-bar a .remove{color:var(--text-4);font-size:14px;line-height:1;cursor:pointer;transition:color var(--transition)}
+.pinned-bar a .remove:hover{color:var(--danger)}
+
+/* Layout + TOC */
+.layout{max-width:var(--max-w);margin:0 auto;padding:0 32px}
+.content-wrap{display:grid;grid-template-columns:1fr 220px;gap:48px;align-items:start}
+.content{padding:48px 0 96px;min-width:0}
+
+.toc{
+  position:sticky;top:calc(var(--header-h) + 24px);
+  font-size:13px;align-self:start;
+  max-height:calc(100vh - var(--header-h) - 48px);
+  overflow-y:auto;padding-right:4px;
+}
+.toc-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-3);margin-bottom:14px;padding-left:14px}
+.toc a{
+  display:block;position:relative;padding:7px 12px 7px 14px;
+  border-radius:var(--radius-sm);color:var(--text-3);
+  border-left:2px solid transparent;transition:all var(--transition);font-weight:500;
+}
+.toc a:hover{color:var(--text);background:var(--bg-1)}
+.toc a.active{color:var(--accent);border-left-color:var(--accent);background:var(--accent-soft)}
+.toc a small{display:block;font-size:11px;color:var(--text-4);font-weight:400;margin-top:1px}
+.toc a.active small{color:var(--accent);opacity:0.7}
+.toc a::after{content:'';position:absolute;left:14px;bottom:0;height:1px;background:var(--accent);width:0;transition:width 0.3s;opacity:0.4}
+.toc a.read::after{width:calc(100% - 28px)}
+
+/* Hero */
+.hero{margin-bottom:64px;padding-bottom:48px;border-bottom:1px solid var(--border)}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:8px;padding:5px 12px 5px 10px;
+  background:var(--accent-soft);border:1px solid var(--accent-border);border-radius:100px;
+  font-size:12px;font-weight:500;color:var(--accent);margin-bottom:24px;
+}
+.hero-badge::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 3px rgba(234,179,8,0.2);animation:pulse 2s ease-in-out infinite}
+.hero h1{font-size:clamp(32px,4.5vw,46px);line-height:1.1;font-weight:800;letter-spacing:-0.035em;color:var(--text);margin-bottom:20px}
+.hero h1 em{font-style:normal;color:var(--accent);white-space:nowrap}
+.hero p{font-size:16.5px;color:var(--text-2);max-width:640px;line-height:1.6}
+.hero-meta{display:flex;flex-wrap:wrap;gap:20px;margin-top:28px}
+.hero-meta-item{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-3)}
+.hero-meta-item svg{width:14px;height:14px;color:var(--text-4);flex-shrink:0}
+.hero-meta-item b{color:var(--text-2);font-weight:500}
+
+/* Section */
+.section{margin-bottom:64px;scroll-margin-top:calc(var(--header-h) + 20px);opacity:0;transform:translateY(16px);transition:opacity 0.5s,transform 0.5s}
+.section:last-child{margin-bottom:0}
+.section.in{opacity:1;transform:none}
+.section-head{margin-bottom:24px;position:relative}
+.section-head h2{font-size:24px;font-weight:700;letter-spacing:-0.02em;color:var(--text);margin-bottom:8px;display:flex;align-items:center;gap:12px}
+.section-head h2::before{content:'';width:3px;height:22px;background:var(--accent);border-radius:2px;flex-shrink:0}
+.section-head p{font-size:14.5px;color:var(--text-2);padding-left:15px}
+
+.pin-btn{
+  position:absolute;top:0;right:0;width:28px;height:28px;
+  display:grid;place-items:center;background:transparent;border:1px solid transparent;
+  border-radius:var(--radius-sm);color:var(--text-4);opacity:0;
+  transition:all var(--transition);z-index:2;
+}
+.section:hover .pin-btn{opacity:1}
+.pin-btn:hover{background:var(--bg-2);color:var(--text-2);border-color:var(--border-2)}
+.pin-btn.on{opacity:1;color:var(--accent);background:var(--accent-soft);border-color:var(--accent-border)}
+.pin-btn svg{width:14px;height:14px}
+
+.subhead{font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-3);margin:40px 0 16px;display:flex;align-items:center;gap:12px}
+.subhead::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* Grid */
+.grid-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.grid-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+
+/* Card */
+.card{
+  background:var(--bg-1);border:1px solid var(--border);border-radius:var(--radius);
+  padding:18px 20px;transition:border-color var(--transition),background var(--transition);
+  position:relative;overflow:hidden;isolation:isolate;
+}
+.card:hover{border-color:var(--border-2);background:var(--bg-2)}
+.card-tag{display:inline-block;font-size:11px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;color:var(--text-3);margin-bottom:12px}
+.card h3{font-size:15.5px;font-weight:600;color:var(--text);margin-bottom:12px;letter-spacing:-0.01em;line-height:1.4}
+.card p{font-size:13.5px;color:var(--text-2);line-height:1.6;margin-bottom:10px}
+.card p:last-child{margin-bottom:0}
+.card ul{list-style:none;padding:0;margin:0}
+.card li{position:relative;padding:5px 0 5px 18px;font-size:13.5px;color:var(--text-2);line-height:1.5}
+.card li::before{content:'';position:absolute;left:0;top:14px;width:8px;height:1.5px;background:var(--text-4);border-radius:1px;transition:background var(--transition),width var(--transition)}
+.card:hover li::before{background:var(--accent);width:10px}
+
+/* Command list */
+.cmd-list{border:1px solid var(--border);border-radius:var(--radius);background:var(--bg-1);overflow:hidden}
+.cmd-item{
+  display:grid;grid-template-columns:auto 1fr;gap:16px;
+  padding:14px 20px;border-bottom:1px solid var(--border);
+  align-items:start;transition:background var(--transition);
+  position:relative;
+}
+.cmd-item:last-child{border-bottom:0}
+.cmd-item:hover{background:var(--bg-2)}
+.cmd-name{
+  font-family:var(--mono);font-size:13px;font-weight:600;
+  color:var(--accent);white-space:nowrap;
+  padding:3px 8px;background:var(--accent-soft);
+  border:1px solid var(--accent-border);border-radius:var(--radius-xs);
+  line-height:1.4;align-self:start;
+}
+.cmd-desc{font-size:13.5px;color:var(--text-2);line-height:1.55;min-width:0}
+.cmd-desc b{color:var(--text);font-weight:500}
+.cmd-note{display:block;margin-top:6px;font-size:12.5px;color:var(--text-3);font-style:italic}
+.cmd-note.off{color:var(--text-4);text-decoration:line-through;font-style:normal}
+.cmd-note.on{color:var(--success);font-style:normal}
+
+/* Notice */
+.notice{
+  display:flex;gap:14px;padding:16px 20px;
+  background:var(--accent-soft);border:1px solid var(--accent-border);
+  border-radius:var(--radius);font-size:13.5px;color:var(--text);line-height:1.6;
+  margin-bottom:20px;align-items:flex-start;
+}
+.notice-icon{flex-shrink:0;width:20px;height:20px;margin-top:1px;border-radius:50%;background:var(--accent);color:#0a0a0b;display:grid;place-items:center;font-size:12px;font-weight:700}
+.notice b{color:var(--accent);font-weight:600}
+.notice.danger{background:var(--danger-soft);border-color:rgba(239,68,68,0.3)}
+.notice.danger .notice-icon{background:var(--danger);color:#fff}
+.notice.danger b{color:var(--danger)}
+
+/* Steps */
+.steps{border:1px solid var(--border);border-radius:var(--radius);background:var(--bg-1);overflow:hidden}
+.step{display:grid;grid-template-columns:44px 1fr;gap:18px;padding:16px 22px;border-bottom:1px solid var(--border);align-items:start;transition:background var(--transition)}
+.step:last-child{border-bottom:0}
+.step:hover{background:var(--bg-2)}
+.step-num{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--accent);padding-top:2px}
+.step-body{font-size:14px;color:var(--text-2);line-height:1.6}
+.step-body b{color:var(--text);font-weight:500}
+
+/* Linkbox */
+.linkbox{
+  display:flex;align-items:center;justify-content:space-between;gap:24px;
+  padding:22px 26px;background:var(--bg-1);border:1px solid var(--border);
+  border-radius:var(--radius);flex-wrap:wrap;
+  transition:border-color var(--transition),background var(--transition);
+}
+.linkbox:hover{border-color:var(--border-2);background:var(--bg-2)}
+.linkbox-text b{display:block;font-size:15px;font-weight:600;color:var(--text);margin-bottom:3px;letter-spacing:-0.01em}
+.linkbox-text span{font-size:13px;color:var(--text-2)}
+
+/* Buttons */
+.btn{
+  display:inline-flex;align-items:center;gap:8px;padding:10px 18px;
+  border-radius:var(--radius-sm);font-size:13.5px;font-weight:500;line-height:1.2;
+  transition:all var(--transition);white-space:nowrap;cursor:pointer;
+  text-decoration:none;border:1px solid transparent;user-select:none;
+}
+.btn:active{transform:scale(0.98)}
+.btn-primary{background:var(--accent);color:#0a0a0b;border-color:var(--accent);box-shadow:0 1px 2px rgba(0,0,0,0.2),0 0 0 1px rgba(234,179,8,0.2)}
+.btn-primary:hover{background:var(--accent-2);border-color:var(--accent-2);color:#0a0a0b;box-shadow:0 4px 16px rgba(234,179,8,0.4)}
+.btn-arrow::after{
+  content:'';width:14px;height:14px;background:currentColor;
+  -webkit-mask:var(--arrow-mask) center/contain no-repeat;
+  mask:var(--arrow-mask) center/contain no-repeat;
+  transition:transform var(--transition);
+}
+.btn-arrow:hover::after{transform:translateX(3px)}
+
+/* Footer */
+.footer{border-top:1px solid var(--border);padding:40px 0;margin-top:56px;background:var(--bg-1)}
+.footer-inner{max-width:var(--max-w);margin:0 auto;padding:0 32px;display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap}
+.footer-brand{display:flex;align-items:center;gap:10px;font-size:13.5px;color:var(--text-2)}
+.footer-brand .logo-mark{width:24px;height:24px;font-size:11px;box-shadow:none}
+.footer-made{
+  font-size:13px;color:var(--text-3);
+  display:inline-flex;align-items:center;gap:6px;
+}
+.footer-made b{
+  color:var(--accent);font-weight:600;
+  font-family:var(--mono);letter-spacing:-0.01em;
+}
+.footer-links{display:flex;gap:24px;flex-wrap:wrap}
+.footer-links a{font-size:13px;color:var(--text-3);transition:color var(--transition)}
+.footer-links a:hover{color:var(--accent)}
+
+/* Toast */
+.toast{
+  position:fixed;left:50%;bottom:32px;transform:translate(-50%,20px);
+  padding:10px 18px;background:var(--bg-2);border:1px solid var(--border-2);
+  border-radius:100px;font-size:13px;color:var(--text);
+  box-shadow:0 8px 24px rgba(0,0,0,0.4);
+  opacity:0;pointer-events:none;transition:opacity 0.25s,transform 0.25s;
+  z-index:200;max-width:calc(100vw - 40px);
+}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+/* To top */
+.to-top{
+  position:fixed;right:24px;bottom:24px;width:48px;height:48px;
+  display:grid;place-items:center;background:var(--bg-2);
+  border:1px solid var(--border-2);border-radius:50%;color:var(--text);
+  box-shadow:0 8px 24px rgba(0,0,0,0.35);
+  opacity:0;transform:translateY(12px);pointer-events:none;
+  transition:opacity 0.25s,transform 0.25s,background 0.25s,border-color 0.25s,color 0.25s;
+  z-index:70;padding:0;
+}
+.to-top svg{position:relative;z-index:2;width:18px;height:18px}
+.to-top::before{
+  content:'';position:absolute;inset:0;border-radius:50%;
+  background:conic-gradient(var(--accent) var(--p,0%),transparent 0);
+  -webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 2px),#000 calc(100% - 2px));
+          mask:radial-gradient(farthest-side,transparent calc(100% - 2px),#000 calc(100% - 2px));
+  pointer-events:none;
+}
+.to-top:hover{background:var(--accent);border-color:var(--accent);color:#0a0a0b}
+.to-top:hover::before{background:conic-gradient(#0a0a0b var(--p,0%),transparent 0)}
+.to-top.show{opacity:1;transform:none;pointer-events:auto}
+
+/* Command palette */
+.cmdk{
+  position:fixed;inset:0;z-index:300;background:rgba(0,0,0,0.6);
+  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+  display:none;align-items:flex-start;justify-content:center;
+  padding-top:14vh;padding-left:20px;padding-right:20px;
+}
+.cmdk.open{display:flex;animation:fadeIn 0.15s ease}
+.cmdk-box{
+  width:100%;max-width:560px;background:var(--bg-1);
+  border:1px solid var(--border-2);border-radius:var(--radius-lg);
+  box-shadow:0 24px 64px rgba(0,0,0,0.6);overflow:hidden;
+  animation:cmdkIn 0.2s cubic-bezier(0.4,0,0.2,1);
+}
+@keyframes cmdkIn{from{opacity:0;transform:translateY(-8px) scale(0.98)}to{opacity:1;transform:none}}
+.cmdk-input-wrap{display:flex;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid var(--border)}
+.cmdk-input-wrap svg{width:18px;height:18px;color:var(--text-3);flex-shrink:0}
+.cmdk-input{flex:1;background:none;border:0;outline:0;color:var(--text);font:inherit;font-size:15px}
+.cmdk-input::placeholder{color:var(--text-4)}
+.cmdk-kbd{font-family:var(--mono);font-size:10px;padding:3px 6px;background:var(--bg-3);border:1px solid var(--border-2);border-radius:4px;color:var(--text-3)}
+.cmdk-list{max-height:340px;overflow-y:auto;padding:6px}
+.cmdk-item{
+  display:flex;align-items:center;gap:12px;padding:10px 14px;
+  border-radius:var(--radius-sm);cursor:pointer;
+  transition:background var(--transition);color:var(--text-2);font-size:14px;
+}
+.cmdk-item:hover,.cmdk-item.active{background:var(--bg-3);color:var(--text)}
+.cmdk-item.active{background:var(--accent-soft);color:var(--accent)}
+.cmdk-item-icon{width:20px;height:20px;flex-shrink:0;display:grid;place-items:center;color:var(--text-4)}
+.cmdk-item.active .cmdk-item-icon{color:var(--accent)}
+.cmdk-item small{margin-left:auto;font-size:11px;color:var(--text-4);font-family:var(--mono)}
+.cmdk-empty{padding:32px;text-align:center;font-size:13px;color:var(--text-3)}
+
+/* Compact */
+body.compact{font-size:14px}
+body.compact .section{margin-bottom:40px}
+body.compact .card{padding:14px 16px}
+body.compact .cmd-item{padding:10px 16px}
+body.compact .step{padding:12px 18px}
+body.compact .hero{margin-bottom:40px;padding-bottom:32px}
+
+/* Responsive */
+@media(max-width:1100px){
+  .content-wrap{grid-template-columns:1fr;gap:0}
+  .toc{display:none}
+  .header-nav a{padding:7px 8px;font-size:12.5px}
+  .header-clock{display:none}
+}
+@media(max-width:900px){
+  :root{--header-h:60px}
+  .header-inner{padding:0 20px;gap:10px}
+  .header-nav{display:none}
+  .menu-toggle{display:grid}
+  .header-cta{padding:7px 10px;font-size:12.5px}
+  .header-cta span{display:none}
+  .header-icon-btn{width:32px;height:32px}
+  .layout{padding:0 20px}
+  .content{padding:32px 0 64px}
+  .hero{margin-bottom:48px;padding-bottom:32px}
+  .hero h1{font-size:28px}
+  .hero p{font-size:15px}
+  .hero-meta{gap:14px}
+  .hero-meta-item{font-size:12.5px}
+  .grid-2,.grid-3{grid-template-columns:1fr}
+  .section{margin-bottom:48px}
+  .section-head h2{font-size:20px}
+  .subhead{margin:32px 0 12px}
+  .cmd-item{grid-template-columns:1fr;gap:8px;padding:14px 16px}
+  .cmd-name{justify-self:start}
+  .card{padding:16px 18px}
+  .linkbox{padding:18px 20px;gap:16px}
+  .footer-inner{padding:0 20px}
+  .footer{padding:28px 0}
+  .to-top{right:16px;bottom:16px}
+  .pin-btn{opacity:1}
+  .pinned-bar{padding:8px 20px}
+}
+@media(max-width:520px){
+  .hero h1{font-size:24px;letter-spacing:-0.03em}
+  .section-head p{padding-left:0}
+  .section-head h2::before{height:18px}
+  .linkbox{flex-direction:column;align-items:stretch}
+  .linkbox .btn{width:100%;justify-content:center}
+}
+@media(hover:none){
+  .card::after{display:none}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:0.01ms!important;animation-iteration-count:1!important;transition-duration:0.01ms!important}
+  html{scroll-behavior:auto!important}
+  .section{opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+
+<div class="progress" aria-hidden="true"><div class="progress-bar" id="progressBar"></div></div>
+
+<header class="header">
+  <div class="header-inner">
+    <a href="#" class="logo" aria-label="KL | Events — на главную">
+      <span class="logo-mark">E</span>
+      <span>KL | Events</span>
+      <span class="logo-sep">/</span>
+      <span class="logo-sub">Команды</span>
+    </a>
+
+    <nav class="header-nav" aria-label="Основная навигация">
+      <a href="#player">Игрокам</a>
+      <a href="#admin">Админам</a>
+      <a href="#custom">Предметы</a>
+      <a href="#roleplugin">Роли</a>
+      <a href="#money">Деньги</a>
+      <a href="#about">О документе</a>
+    </nav>
+
+    <div class="header-clock" title="Время по МСК" aria-label="Московское время">
+      <span class="dot"></span>
+      <span id="clock">--:--:--</span>
+    </div>
+
+    <button class="header-icon-btn" id="themeBtn" title="Переключить тему" aria-label="Переключить тему" aria-pressed="false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="4"/>
+        <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+      </svg>
+    </button>
+
+    <button class="header-icon-btn" id="compactBtn" title="Компактный режим" aria-label="Компактный режим" aria-pressed="false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/>
+      </svg>
+    </button>
+
+    <button class="header-icon-btn" id="cmdkBtn" title="Быстрый поиск (Ctrl+K)" aria-label="Быстрый поиск">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
+      </svg>
+    </button>
+
+    <a href="https://discord.gg/Tvzd4MKdB" target="_blank" rel="noopener noreferrer" class="header-cta">
+      <span>Discord</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
+    </a>
+
+    <button class="menu-toggle" id="menuToggle" aria-label="Открыть меню" aria-expanded="false" aria-controls="mobileMenu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+  </div>
+</header>
+
+<div class="pinned-bar" id="pinnedBar" aria-label="Избранные разделы">
+  <span class="pinned-bar-label">Закреплено</span>
+</div>
+
+<nav class="mobile-menu" id="mobileMenu" aria-label="Мобильная навигация" aria-hidden="true">
+  <div class="mobile-menu-title">Разделы</div>
+  <a href="#player"><span>Команды игрокам</span></a>
+  <a href="#admin"><span>Команды админам</span></a>
+  <a href="#custom"><span>Кастомные предметы</span></a>
+  <a href="#roleplugin"><span>Плагин ролей</span></a>
+  <a href="#money"><span>Плагин денег</span></a>
+  <a href="#about"><span>О документе</span></a>
+</nav>
+
+<div class="layout">
+  <div class="content-wrap">
+    <main class="content">
+
+      <div class="hero">
+        <span class="hero-badge">Внутренний документ · Version 2.1</span>
+        <h1>Команды сервера <em>KL | Events</em></h1>
+        <p>Полный список команд: доступные игрокам, администрации, кастомные предметы и плагины. Всё что нужно знать для игры и проведения ивентов.</p>
+
+        <div class="hero-meta">
+          <div class="hero-meta-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            <span><b>40+</b> команд · <b>3</b> плагина</span>
+          </div>
+          <div class="hero-meta-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <span>Version 2.1</span>
+          </div>
+          <div class="hero-meta-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M12 2 4 6v6c0 5 3.4 9.4 8 10 4.6-.6 8-5 8-10V6z"/>
+            </svg>
+            <span>Сделано <b>Firmuu</b></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ИГРОКАМ -->
+      <section class="section" id="player">
+        <div class="section-head">
+          <h2>Команды игрокам</h2>
+          <p>ClientCommandHandler — открывается по нажатию <code>[ё]</code>, вводится через точку</p>
+        </div>
+
+        <div class="notice">
+          <span class="notice-icon">i</span>
+          <div>Команды прописываются в <b>ClientCommandHandler</b> и доступны любому игроку. Открываете по нажатию <b>[ё]</b>, вводите точку и слитно команду. Пример: <b>.cuff</b></div>
+        </div>
+
+        <div class="cmd-list">
+          <div class="cmd-item"><span class="cmd-name">suicide [причина]</span><span class="cmd-desc">Убить себя по указанной причине.</span></div>
+          <div class="cmd-item"><span class="cmd-name">call [текст]</span><span class="cmd-desc">Отправить текст администратору.</span></div>
+          <div class="cmd-item"><span class="cmd-name">inpocket</span><span class="cmd-desc">Зайди в измерение SCP-106. <span class="cmd-note">Только если вы SCP-106.</span></span></div>
+          <div class="cmd-item"><span class="cmd-name">outpocket</span><span class="cmd-desc">Выйди из измерения SCP-106. <span class="cmd-note">Только если вы SCP-106.</span></span></div>
+          <div class="cmd-item"><span class="cmd-name">tps</span><span class="cmd-desc">Показывает текущий TPS на сервере.</span></div>
+          <div class="cmd-item"><span class="cmd-name">cuff</span><span class="cmd-desc">Связать игрока.</span></div>
+          <div class="cmd-item"><span class="cmd-name">nick</span><span class="cmd-desc">Посмотреть свой ник и описание.</span></div>
+          <div class="cmd-item"><span class="cmd-name">time</span><span class="cmd-desc">Посмотреть время с начала раунда.</span></div>
+          <div class="cmd-item"><span class="cmd-name">hack</span><span class="cmd-desc">Начать взлом. <span class="cmd-note">Работает если включена ИМ.</span></span></div>
+          <div class="cmd-item"><span class="cmd-name">pay [сумма]</span><span class="cmd-desc">Передать какую-то сумму игроку. <span class="cmd-note">Работает если включена ИМ.</span></span></div>
+          <div class="cmd-item"><span class="cmd-name">rskin</span><span class="cmd-desc">Сменить одежду. <span class="cmd-note">Работает если включена ИМ.</span></span></div>
+          <div class="cmd-item"><span class="cmd-name">hit</span><span class="cmd-desc">Ударить игрока. <span class="cmd-note off">Отключена</span></span></div>
+        </div>
+      </section>
+
+      <!-- АДМИНАМ -->
+      <section class="section" id="admin">
+        <div class="section-head">
+          <h2>Команды администрации</h2>
+          <p>RemoteAdminCommandHandler — открывается по нажатию <code>[Ь]</code>, далее RemoteAdminConsole</p>
+        </div>
+
+        <div class="notice">
+          <span class="notice-icon">i</span>
+          <div>Команды прописываются в <b>RemoteAdminCommandHandler</b> и доступны тем, у кого есть права. Открываете по нажатию <b>[Ь]</b>, нажимаете <b>RemoteAdminConsole</b> и вводите команду.</div>
+        </div>
+
+        <div class="cmd-list">
+          <div class="cmd-item"><span class="cmd-name">evt start [rp] [название]</span><span class="cmd-desc">Начать ивент.</span></div>
+          <div class="cmd-item"><span class="cmd-name">evt stop</span><span class="cmd-desc">Закончить ивент.</span></div>
+          <div class="cmd-item"><span class="cmd-name">ccolor [R] [G] [B]</span><span class="cmd-desc">Изменить цвет в комнате.</span></div>
+          <div class="cmd-item"><span class="cmd-name">colora [R] [G] [B]</span><span class="cmd-desc">Изменить цвет в зоне.</span></div>
+          <div class="cmd-item"><span class="cmd-name">colorz [R] [G] [B]</span><span class="cmd-desc">Изменить цвет в комплексе.</span></div>
+          <div class="cmd-item"><span class="cmd-name">colorz clear</span><span class="cmd-desc">Вернуть исходный цвет в комплексе.</span></div>
+          <div class="cmd-item"><span class="cmd-name">spawntoy [ID toy]</span><span class="cmd-desc">Заспавнить toy-предмет.</span></div>
+          <div class="cmd-item"><span class="cmd-name">balance [сумма] [ID]</span><span class="cmd-desc">Управление балансом игроков.</span></div>
+          <div class="cmd-item"><span class="cmd-name">event [Баланс/Предатели]</span><span class="cmd-desc">Запустить баланс или предатели.</span></div>
+          <div class="cmd-item"><span class="cmd-name">intercomtext [текст]</span><span class="cmd-desc">Изменить текст в интеркоме.</span></div>
+          <div class="cmd-item"><span class="cmd-name">size [ID] [x] [y] [z]</span><span class="cmd-desc">Изменить размер игроку.</span></div>
+          <div class="cmd-item"><span class="cmd-name">dropsize [ID] [предмет] [x] [y] [z]</span><span class="cmd-desc">Выдать предмет с изменённым размером.</span></div>
+          <div class="cmd-item"><span class="cmd-name">ci list reg</span><span class="cmd-desc">Посмотреть список кастомных предметов.</span></div>
+          <div class="cmd-item"><span class="cmd-name">gzh</span><span class="cmd-desc">Пустить газ в тяжёлой зоне.</span></div>
+          <div class="cmd-item"><span class="cmd-name">teleporttocords [ID] [x] [y] [z]</span><span class="cmd-desc">Телепортировать игрока по определённым координатам.</span></div>
+          <div class="cmd-item"><span class="cmd-name">tesla</span><span class="cmd-desc">Включить/выключить теслы.</span></div>
+          <div class="cmd-item"><span class="cmd-name">windowset [on/off]</span><span class="cmd-desc">Включить/выключить неломаемые стёкла.</span></div>
+          <div class="cmd-item"><span class="cmd-name">adoor [on/off]</span><span class="cmd-desc">Включить/выключить автоматическое закрытие дверей.</span></div>
+          <div class="cmd-item"><span class="cmd-name">disescape</span><span class="cmd-desc">Включить/выключить побег.</span></div>
+          <div class="cmd-item"><span class="cmd-name">changeskinset [on/off]</span><span class="cmd-desc">Включить/выключить команду rskin.</span></div>
+          <div class="cmd-item"><span class="cmd-name">infection [роль]</span><span class="cmd-desc">Включить/выключить событие заражения.</span></div>
+          <div class="cmd-item"><span class="cmd-name">hack [on/off]</span><span class="cmd-desc">Включить/выключить команду hack.</span></div>
+          <div class="cmd-item"><span class="cmd-name">tch</span><span class="cmd-desc">Выдать тактический щит.</span></div>
+          <div class="cmd-item"><span class="cmd-name">gsg</span><span class="cmd-desc">Выдать гранатомёт.</span></div>
+          <div class="cmd-item"><span class="cmd-name">nvg</span><span class="cmd-desc">Выдать прибор ночного виденья.</span></div>
+          <div class="cmd-item"><span class="cmd-name">scpnus [on/off]</span><span class="cmd-desc">Включить/выключить авто-НОУС SCP. <span class="cmd-note off">Отключена</span></span></div>
+        </div>
+      </section>
+
+      <!-- КАСТОМНЫЕ ПРЕДМЕТЫ -->
+      <section class="section" id="custom">
+        <div class="section-head">
+          <h2>Кастомные предметы</h2>
+          <p>Сделаны с помощью Exiled CustomItem's · выдаются через <code>ci give [ID]</code></p>
+        </div>
+
+        <div class="notice">
+          <span class="notice-icon">i</span>
+          <div>Кастомные предметы помогают погружению в RP-процесс или проведению ивентов. Выдавать по команде <b>ci give [ID предмета]</b>.</div>
+        </div>
+
+        <div class="grid-2">
+          <div class="card">
+            <span class="card-tag">ID · 51</span>
+            <h3>ПНВ</h3>
+            <p>Прибор ночного виденья.</p>
+          </div>
+          <div class="card">
+            <span class="card-tag">ID · 66</span>
+            <h3>Гранатомёт</h3>
+            <p>Тяжёлое вооружение для особых ситуаций.</p>
+          </div>
+          <div class="card">
+            <span class="card-tag">ID · 101</span>
+            <h3>Бронежилет смертника</h3>
+            <p>Специальная броня для ролевых сценариев.</p>
+          </div>
+          <div class="card">
+            <span class="card-tag">ID · 136</span>
+            <h3>Тактический щит</h3>
+            <p>Защитное снаряжение для МОГ и спецназа.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ПЛАГИН РОЛЕЙ -->
+      <section class="section" id="roleplugin">
+        <div class="section-head">
+          <h2>Плагин ролей</h2>
+          <p>Помощник в подготовке к ивенту · RA-панель</p>
+        </div>
+
+        <div class="notice">
+          <span class="notice-icon">i</span>
+          <div><b>Совет:</b> чтобы создавать роли, используйте <b>dummy</b> — спавните его, делаете нужный класс, инвентарь, броню, HP, setname, cinfo и создавайте роль. Так удобнее.</div>
+        </div>
+
+        <h3 class="subhead mt-0">Ивенты</h3>
+        <div class="grid-3 mb-32">
+          <div class="card"><h3>Бункер</h3><p>Ролевой сценарий в бункере.</p></div>
+          <div class="card"><h3>Город</h3><p>Городской сценарий.</p></div>
+          <div class="card"><h3>Пустошь</h3><p>Постапокалиптический сценарий.</p></div>
+          <div class="card"><h3>Погребённые под снегом</h3><p>Снежный сценарий.</p></div>
+          <div class="card"><h3>Обычный день</h3><p>Стандартный игровой режим.</p></div>
+        </div>
+
+        <h3 class="subhead">Команды (через RA-панель)</h3>
+        <div class="cmd-list">
+          <div class="cmd-item"><span class="cmd-name">newrole [id] [название] [ивент]</span><span class="cmd-desc">Создаёт роль. ID игрока, с которого создаётся роль, ивент — к которому относится. Спавните игрока, выдаёте предметы, dummy, size, setname — всё сохранится.</span></div>
+          <div class="cmd-item"><span class="cmd-name">delrole [имя] [ивент]</span><span class="cmd-desc">Удалить роль.</span></div>
+          <div class="cmd-item"><span class="cmd-name">addcategory [имя] [роль1, роль2, ...]</span><span class="cmd-desc">Перенести роли в категорию. Например, сделать отряд МОГ Epsilon-11.</span></div>
+          <div class="cmd-item"><span class="cmd-name">delcategory [имя] [ивент]</span><span class="cmd-desc">Удалить категорию целиком.</span></div>
+          <div class="cmd-item"><span class="cmd-name">listrole / listrole 2 / listrole Город</span><span class="cmd-desc">Список ролей. Просто список, по номеру страницы или по названию ивента.</span></div>
+          <div class="cmd-item"><span class="cmd-name">chorole [имя] [ивент]</span><span class="cmd-desc">Выбрать роль/категорию для бинда.</span></div>
+          <div class="cmd-item"><span class="cmd-name">giverole [имя] [ивент]</span><span class="cmd-desc">Выдать роль тому, на кого смотришь, без бинда.</span></div>
+        </div>
+
+        <h3 class="subhead">Бинды</h3>
+        <div class="notice">
+          <span class="notice-icon">i</span>
+          <div><b>Server Specific Settings → «Выдача роли».</b> Назначайте на клавиши, которые в бою случайно не нажмёте.</div>
+        </div>
+        <div class="cmd-list">
+          <div class="cmd-item"><span class="cmd-name">Вкл/Выкл меню</span><span class="cmd-desc">Главный переключатель. Без него ничего не работает (защита от случайных нажатий).</span></div>
+          <div class="cmd-item"><span class="cmd-name">Prev/Next ивент</span><span class="cmd-desc">Листают ивенты.</span></div>
+          <div class="cmd-item"><span class="cmd-name">Prev/Next роль</span><span class="cmd-desc">Листают роли.</span></div>
+          <div class="cmd-item"><span class="cmd-name">Выбрать роль</span><span class="cmd-desc">Запоминает текущую роль.</span></div>
+          <div class="cmd-item"><span class="cmd-name">Выдать роль</span><span class="cmd-desc">Выдаёт роль тому, на кого смотришь.</span></div>
+        </div>
+
+        <h3 class="subhead">Как раздавать на ивенте</h3>
+        <div class="steps">
+          <div class="step"><span class="step-num">01</span><span class="step-body">Жмёшь <b>Вкл/Выкл меню</b> — появится зелёный <b>Меню: ВКЛ</b>.</span></div>
+          <div class="step"><span class="step-num">02</span><span class="step-body">Стрелками находишь нужный ивент и роль.</span></div>
+          <div class="step"><span class="step-num">03</span><span class="step-body"><b>Выбрать роль</b> — увидишь <b>Выбрано: Бункер → МОГ</b>.</span></div>
+          <div class="step"><span class="step-num">04</span><span class="step-body">Смотришь на игрока, жмёшь <b>Выдать роль</b> — он мгновенно превращается.</span></div>
+          <div class="step"><span class="step-num">05</span><span class="step-body">Закончил — снова <b>Вкл/Выкл меню</b> (выключил, чтобы случайно не выдать).</span></div>
+        </div>
+
+        <h3 class="subhead">Категории</h3>
+        <div class="card mb-32">
+          <p>Категория = несколько ролей в одной группе. Каждое «Выдать» в категории выдаёт следующую роль по порядку.</p>
+          <p><b>Пример:</b> категория <code>МОГ</code> с ролями Капитан / Сержант / Рядовой.</p>
+          <ul>
+            <li>1-й клик → Капитан</li>
+            <li>2-й клик → Сержант</li>
+            <li>3-й клик → Рядовой</li>
+            <li>4-й клик → опять Капитан (цикл)</li>
+          </ul>
+          <p class="card-text mt-16"><b>Сброс</b> — снова нажми «Выбрать» на этой же категории.</p>
+        </div>
+
+        <div class="notice danger">
+          <span class="notice-icon">!</span>
+          <div><b>Важно:</b> если игрок в <b>GodMode</b>, роль ему не выдастся. Одинаковые имена ролей в одном ивенте запрещены. В разных — можно.</div>
+        </div>
+      </section>
+
+      <!-- ПЛАГИН ДЕНЕГ -->
+      <section class="section" id="money">
+        <div class="section-head">
+          <h2>Плагин денег</h2>
+          <p>Система денег для игроков и администрации</p>
+        </div>
+
+        <h3 class="subhead mt-0">Команды администрации</h3>
+        <div class="cmd-list mb-32">
+          <div class="cmd-item"><span class="cmd-name">money</span><span class="cmd-desc">Вкл/выкл систему денег.</span></div>
+          <div class="cmd-item"><span class="cmd-name">givemoney [id] [сумма] <span style="color:var(--text-4);font-weight:400">(gim)</span></span><span class="cmd-desc">Выдать одному игроку.</span></div>
+          <div class="cmd-item"><span class="cmd-name">givemoneyeve [сумма] <span style="color:var(--text-4);font-weight:400">(gme)</span></span><span class="cmd-desc">Выдать всем онлайн.</span></div>
+        </div>
+
+        <h3 class="subhead">Команды игрокам</h3>
+        <div class="cmd-list">
+          <div class="cmd-item"><span class="cmd-name">.bal <span style="color:var(--text-4);font-weight:400">(.balance)</span></span><span class="cmd-desc">Посмотреть свой баланс.</span></div>
+          <div class="cmd-item"><span class="cmd-name">.pay [сумма]</span><span class="cmd-desc">Перевести тому, на кого смотришь.</span></div>
+        </div>
+      </section>
+
+      <!-- О ДОКУМЕНТЕ -->
+      <section class="section" id="about">
+        <div class="section-head">
+          <h2>О документе</h2>
+          <p>Кто сделал и для чего</p>
+        </div>
+
+        <div class="card">
+          <span class="card-tag">Автор</span>
+          <h3>Сделано Firmuu</h3>
+          <p>Этот документ создан для внутреннего использования игроками и администрацией проекта KL | Events. Здесь собраны все команды, кастомные предметы и плагины.</p>
+          <p>По вопросам и предложениям — писать <b>Firmuu</b> в Discord. По вопросам плагина ролей — в ЛС <b>@1385688209463181475</b>.</p>
+        </div>
+
+        <div class="linkbox mt-24">
+          <div class="linkbox-text">
+            <b>Discord-сервер</b>
+            <span>Все вопросы и обсуждения — здесь</span>
+          </div>
+          <a class="btn btn-primary btn-arrow" href="https://discord.gg/Tvzd4MKdB" target="_blank" rel="noopener noreferrer">Перейти в Discord</a>
+        </div>
+      </section>
+
+    </main>
+
+    <aside class="toc" aria-label="Оглавление">
+      <div class="toc-title">На этой странице</div>
+      <a href="#player">Игрокам<small>12 команд</small></a>
+      <a href="#admin">Админам<small>26 команд</small></a>
+      <a href="#custom">Предметы<small>4 кастомных</small></a>
+      <a href="#roleplugin">Плагин ролей<small>Ивенты и бинды</small></a>
+      <a href="#money">Деньги<small>Система денег</small></a>
+      <a href="#about">О документе<small>Автор</small></a>
+    </aside>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <span class="logo-mark">E</span>
+      <span>KL | Events — команды сервера</span>
+    </div>
+    <div class="footer-made">
+      Сделано <b>Firmuu</b>
+    </div>
+    <div class="footer-links">
+      <a href="#" data-scroll-top>Наверх</a>
+      <a href="https://discord.gg/Tvzd4MKdB" target="_blank" rel="noopener noreferrer">Discord</a>
+    </div>
+  </div>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<button class="to-top" id="toTop" aria-label="Наверх">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M12 19V5"/><path d="m5 12 7-7 7 7"/>
+  </svg>
+</button>
+
+<div class="cmdk" id="cmdk" role="dialog" aria-modal="true" aria-label="Быстрый поиск">
+  <div class="cmdk-box">
+    <div class="cmdk-input-wrap">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
+      </svg>
+      <input class="cmdk-input" id="cmdkInput" type="text" placeholder="Команда, раздел, предмет…" autocomplete="off">
+      <span class="cmdk-kbd">ESC</span>
+    </div>
+    <div class="cmdk-list" id="cmdkList"></div>
+  </div>
+</div>
+
+<script>
+(function(){
+  'use strict';
+
+  function escapeHtml(s){
+    return String(s).replace(/[&<>"']/g, function(c){
+      return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c];
+    });
+  }
+
+  var header = document.querySelector('.header');
+  var headerH = header ? header.offsetHeight : 64;
+  var progressBar = document.getElementById('progressBar');
+  var toTop = document.getElementById('toTop');
+
+  var toastEl = document.getElementById('toast');
+  var toastTimer;
+  function toast(msg){
+    if(!toastEl) return;
+    toastEl.textContent = msg;
+    toastEl.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ toastEl.classList.remove('show'); }, 1800);
+  }
+
+  function scrollToId(id){
+    var el = document.getElementById(id);
+    if(!el) return;
+    var top = el.getBoundingClientRect().top + window.pageYOffset - headerH - 20;
+    window.scrollTo({top: top, behavior: 'smooth'});
+  }
+
+  document.querySelectorAll('a[href^="#"]').forEach(function(a){
+    a.addEventListener('click', function(e){
+      var href = a.getAttribute('href');
+      if(href === '#' || href === '') return;
+      var id = href.slice(1);
+      if(document.getElementById(id)){
+        e.preventDefault();
+        scrollToId(id);
+        if(history.replaceState) history.replaceState(null, '', href);
+        closeMobileMenu();
+      }
+    });
+  });
+
+  document.querySelectorAll('[data-scroll-top]').forEach(function(a){
+    a.addEventListener('click', function(e){
+      e.preventDefault();
+      window.scrollTo({top: 0, behavior: 'smooth'});
+    });
+  });
+
+  var sections = Array.prototype.slice.call(document.querySelectorAll('section[id]'));
+  var navLinks = Array.prototype.slice.call(document.querySelectorAll('.header-nav a, .mobile-menu a'));
+
+  function setActive(id){
+    navLinks.forEach(function(l){
+      var isActive = l.getAttribute('href') === '#' + id;
+      l.classList.toggle('active', isActive);
+      if(isActive) l.setAttribute('aria-current', 'true');
+      else l.removeAttribute('aria-current');
+    });
+  }
+
+  var ticking = false;
+  function onScroll(){
+    if(ticking) return;
+    ticking = true;
+    window.requestAnimationFrame(function(){
+      var y = window.pageYOffset;
+      var docH = document.documentElement.scrollHeight - window.innerHeight;
+      var pct = docH > 0 ? (y / docH) : 0;
+
+      if(progressBar) progressBar.style.transform = 'scaleX(' + pct + ')';
+
+      if(toTop){
+        toTop.style.setProperty('--p', (pct * 100).toFixed(1) + '%');
+        toTop.classList.toggle('show', y > 600);
+      }
+
+      if(header) header.style.borderBottomColor = y > 10 ? 'var(--border-2)' : 'var(--border)';
+
+      var refY = y + headerH + 100;
+      var currentId = null;
+      for(var i = 0; i < sections.length; i++){
+        if(sections[i].offsetTop <= refY) currentId = sections[i].id;
+      }
+      if(currentId) setActive(currentId);
+
+      updateToc();
+      ticking = false;
+    });
+  }
+  window.addEventListener('scroll', onScroll, {passive: true});
+  window.addEventListener('resize', function(){
+    headerH = header ? header.offsetHeight : 64;
+    onScroll();
+  });
+
+  if(toTop) toTop.addEventListener('click', function(){
+    window.scrollTo({top: 0, behavior: 'smooth'});
+  });
+
+  /* Mobile menu */
+  var menuToggle = document.getElementById('menuToggle');
+  var mobileMenu = document.getElementById('mobileMenu');
+  function openMobileMenu(){
+    if(!mobileMenu || !menuToggle) return;
+    mobileMenu.classList.add('open');
+    mobileMenu.setAttribute('aria-hidden', 'false');
+    menuToggle.setAttribute('aria-expanded', 'true');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeMobileMenu(){
+    if(!mobileMenu || !menuToggle) return;
+    mobileMenu.classList.remove('open');
+    mobileMenu.setAttribute('aria-hidden', 'true');
+    menuToggle.setAttribute('aria-expanded', 'false');
+    document.body.style.overflow = '';
+  }
+  if(menuToggle) menuToggle.addEventListener('click', function(){
+    if(mobileMenu && mobileMenu.classList.contains('open')) closeMobileMenu();
+    else openMobileMenu();
+  });
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape') closeMobileMenu();
+  });
+
+  /* Spotlight */
+  if(window.matchMedia && window.matchMedia('(hover:hover)').matches){
+    document.querySelectorAll('.card').forEach(function(el){
+      el.addEventListener('pointermove', function(e){
+        var r = el.getBoundingClientRect();
+        el.style.setProperty('--cx', (e.clientX - r.left) + 'px');
+        el.style.setProperty('--cy', (e.clientY - r.top) + 'px');
+      });
+    });
+  }
+
+  document.addEventListener('pointermove', function(e){
+    document.documentElement.style.setProperty('--mx', e.clientX + 'px');
+    document.documentElement.style.setProperty('--my', e.clientY + 'px');
+  }, {passive: true});
+
+  /* Fade-in */
+  if('IntersectionObserver' in window){
+    var secIO = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if(en.isIntersecting){ en.target.classList.add('in'); secIO.unobserve(en.target); }
+      });
+    }, {rootMargin: '-80px'});
+    document.querySelectorAll('.section').forEach(function(s){ secIO.observe(s); });
+  } else {
+    document.querySelectorAll('.section').forEach(function(s){ s.classList.add('in'); });
+  }
+
+  /* Theme — тёмная по умолчанию */
+  var themeBtn = document.getElementById('themeBtn');
+  var storedTheme = null;
+  try { storedTheme = localStorage.getItem('klc-theme'); } catch(e){}
+  if(storedTheme !== 'light' && storedTheme !== 'dark') storedTheme = 'dark';
+  document.documentElement.setAttribute('data-theme', storedTheme);
+  if(themeBtn) themeBtn.setAttribute('aria-pressed', storedTheme === 'light' ? 'true' : 'false');
+
+  if(themeBtn){
+    themeBtn.addEventListener('click', function(){
+      var cur = document.documentElement.getAttribute('data-theme') || 'dark';
+      var next = cur === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      themeBtn.setAttribute('aria-pressed', next === 'light' ? 'true' : 'false');
+      try { localStorage.setItem('klc-theme', next); } catch(e){}
+      var meta = document.querySelector('meta[name="theme-color"]');
+      if(meta) meta.setAttribute('content', next === 'light' ? '#fafaf9' : '#0a0a0b');
+      toast(next === 'light' ? 'Светлая тема' : 'Тёмная тема');
+    });
+  }
+
+  /* Clock MSK */
+  var clockEl = document.getElementById('clock');
+  function updateClock(){
+    if(!clockEl) return;
+    var now = new Date();
+    var utc = now.getTime() + now.getTimezoneOffset() * 60000;
+    var msk = new Date(utc + 3 * 3600000);
+    var hh = String(msk.getHours()).padStart(2, '0');
+    var mm = String(msk.getMinutes()).padStart(2, '0');
+    var ss = String(msk.getSeconds()).padStart(2, '0');
+    clockEl.textContent = hh + ':' + mm + ':' + ss;
+  }
+  updateClock();
+  setInterval(updateClock, 1000);
+
+  /* Compact */
+  var compactBtn = document.getElementById('compactBtn');
+  if(compactBtn){
+    var compactOn = false;
+    try { compactOn = localStorage.getItem('klc-compact') === '1'; } catch(e){}
+    if(compactOn){
+      document.body.classList.add('compact');
+      compactBtn.setAttribute('aria-pressed', 'true');
+      compactBtn.classList.add('on');
+    }
+    compactBtn.addEventListener('click', function(){
+      var on = document.body.classList.toggle('compact');
+      compactBtn.setAttribute('aria-pressed', on ? 'true' : 'false');
+      compactBtn.classList.toggle('on', on);
+      try { localStorage.setItem('klc-compact', on ? '1' : '0'); } catch(e){}
+      toast(on ? 'Компактный режим включён' : 'Компактный режим выключен');
+    });
+  }
+
+  /* Pinned */
+  var pinIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 17v5"/><path d="M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H8a2 2 0 0 0 0 4 1 1 0 0 1 1 1z"/></svg>';
+  var pinnedBar = document.getElementById('pinnedBar');
+  var pinned = [];
+  try { pinned = JSON.parse(localStorage.getItem('klc-pinned') || '[]'); } catch(e){ pinned = []; }
+
+  function savePinned(){ try { localStorage.setItem('klc-pinned', JSON.stringify(pinned)); } catch(e){} }
+  function renderPinned(){
+    if(!pinnedBar) return;
+    if(pinned.length === 0){
+      pinnedBar.classList.remove('has');
+      pinnedBar.innerHTML = '<span class="pinned-bar-label">Закреплено</span>';
+      return;
+    }
+    pinnedBar.classList.add('has');
+    var html = '<span class="pinned-bar-label">Закреплено</span>';
+    pinned.forEach(function(id){
+      var sec = document.getElementById(id);
+      if(!sec) return;
+      var title = sec.querySelector('h2');
+      if(!title) return;
+      html += '<a href="#' + id + '" data-pin-id="' + id + '">' +
+              escapeHtml(title.textContent.trim()) +
+              '<span class="remove" data-remove="' + id + '" title="Убрать">×</span>' +
+              '</a>';
+    });
+    pinnedBar.innerHTML = html;
+  }
+
+  document.querySelectorAll('.section').forEach(function(sec){
+    if(!sec.id) return;
+    var head = sec.querySelector('.section-head');
+    if(!head) return;
+    head.style.position = 'relative';
+
+    var btn = document.createElement('button');
+    btn.className = 'pin-btn' + (pinned.indexOf(sec.id) !== -1 ? ' on' : '');
+    btn.setAttribute('aria-label', 'Закрепить раздел');
+    btn.setAttribute('aria-pressed', pinned.indexOf(sec.id) !== -1 ? 'true' : 'false');
+    btn.innerHTML = pinIcon;
+
+    btn.addEventListener('click', function(){
+      var idx = pinned.indexOf(sec.id);
+      if(idx === -1){
+        pinned.push(sec.id);
+        btn.classList.add('on');
+        btn.setAttribute('aria-pressed', 'true');
+        toast('Раздел закреплён');
+      } else {
+        pinned.splice(idx, 1);
+        btn.classList.remove('on');
+        btn.setAttribute('aria-pressed', 'false');
+        toast('Раздел откреплён');
+      }
+      savePinned(); renderPinned();
+    });
+    head.appendChild(btn);
+  });
+
+  if(pinnedBar){
+    pinnedBar.addEventListener('click', function(e){
+      var removeId = e.target.dataset.remove;
+      if(removeId){
+        e.preventDefault(); e.stopPropagation();
+        var idx = pinned.indexOf(removeId);
+        if(idx !== -1){
+          pinned.splice(idx, 1);
+          savePinned(); renderPinned();
+          document.querySelectorAll('.pin-btn').forEach(function(b){
+            var sec = b.closest('.section');
+            if(sec && sec.id === removeId){
+              b.classList.remove('on');
+              b.setAttribute('aria-pressed', 'false');
+            }
+          });
+          toast('Откреплено');
+        }
+        return;
+      }
+      var link = e.target.closest('a[data-pin-id]');
+      if(link){
+        e.preventDefault();
+        scrollToId(link.dataset.pinId);
+      }
+    });
+  }
+  renderPinned();
+
+  /* TOC */
+  var tocLinks = document.querySelectorAll('.toc a');
+  var tocSections = [];
+  tocLinks.forEach(function(link){
+    var id = link.getAttribute('href').slice(1);
+    var sec = document.getElementById(id);
+    if(sec) tocSections.push({link: link, sec: sec});
+    link.addEventListener('click', function(e){
+      e.preventDefault();
+      scrollToId(id);
+      if(history.replaceState) history.replaceState(null, '', '#' + id);
+    });
+  });
+  function updateToc(){
+    var refY = window.pageYOffset + headerH + 120;
+    tocSections.forEach(function(item){
+      var sec = item.sec, link = item.link;
+      var isActive = sec.offsetTop <= refY &&
+                     sec.offsetTop + sec.offsetHeight > refY;
+      link.classList.toggle('active', isActive);
+      var total = sec.offsetHeight;
+      var read = Math.min(Math.max(-sec.getBoundingClientRect().top + headerH, 0), total);
+      link.classList.toggle('read', total > 0 && read / total > 0.6);
+    });
+  }
+
+  /* Command palette */
+  var cmdk = document.getElementById('cmdk');
+  var cmdkInput = document.getElementById('cmdkInput');
+  var cmdkList = document.getElementById('cmdkList');
+  var cmdkBtn = document.getElementById('cmdkBtn');
+  var cmdkIndex = [], cmdkActiveIdx = 0, cmdkFiltered = [];
+
+  function buildCmdkIndex(){
+    cmdkIndex = [];
+    document.querySelectorAll('.section').forEach(function(sec){
+      var h2 = sec.querySelector('h2');
+      if(h2 && sec.id) cmdkIndex.push({type:'Раздел', label:h2.textContent.trim(), id:sec.id, icon:'▸'});
+    });
+    document.querySelectorAll('.cmd-item').forEach(function(row){
+      var name = row.querySelector('.cmd-name');
+      var sec = row.closest('section');
+      if(name && sec && sec.id){
+        cmdkIndex.push({
+          type:'Команда',
+          label:name.textContent.trim().replace(/\s+/g,' ').slice(0,80),
+          id:sec.id,
+          icon:'$'
+        });
+      }
+    });
+    document.querySelectorAll('#custom .card h3').forEach(function(h){
+      cmdkIndex.push({type:'Предмет', label:h.textContent.trim(), id:'custom', icon:'✦'});
+    });
+  }
+
+  function renderCmdk(query){
+    var q = query.trim().toLowerCase();
+    cmdkFiltered = !q ? cmdkIndex.slice(0, 12)
+      : cmdkIndex.filter(function(it){
+          return it.label.toLowerCase().indexOf(q) !== -1 ||
+                 it.type.toLowerCase().indexOf(q) !== -1;
+        }).slice(0, 50);
+    cmdkActiveIdx = 0;
+    if(cmdkFiltered.length === 0){
+      cmdkList.innerHTML = '<div class="cmdk-empty">Ничего не найдено</div>';
+      return;
+    }
+    cmdkList.innerHTML = cmdkFiltered.map(function(it, i){
+      return '<div class="cmdk-item' + (i === 0 ? ' active' : '') +
+             '" data-idx="' + i + '">' +
+             '<span class="cmdk-item-icon">' + it.icon + '</span>' +
+             '<span>' + escapeHtml(it.label) + '</span>' +
+             '<small>' + it.type + '</small>' +
+             '</div>';
+    }).join('');
+  }
+
+  function setCmdkActive(idx){
+    if(cmdkFiltered.length === 0) return;
+    cmdkActiveIdx = (idx + cmdkFiltered.length) % cmdkFiltered.length;
+    var items = cmdkList.querySelectorAll('.cmdk-item');
+    items.forEach(function(el, i){ el.classList.toggle('active', i === cmdkActiveIdx); });
+    var active = items[cmdkActiveIdx];
+    if(active) active.scrollIntoView({block:'nearest'});
+  }
+
+  function pickCmdk(){
+    var item = cmdkFiltered[cmdkActiveIdx];
+    if(!item) return;
+    closeCmdk();
+    scrollToId(item.id);
+    if(history.replaceState) history.replaceState(null, '', '#' + item.id);
+  }
+
+  function openCmdk(){
+    if(!cmdk) return;
+    cmdk.classList.add('open');
+    cmdkInput.value = '';
+    renderCmdk('');
+    setTimeout(function(){ cmdkInput.focus(); }, 10);
+  }
+  function closeCmdk(){ if(cmdk) cmdk.classList.remove('open'); }
+
+  if(cmdk && cmdkInput && cmdkList){
+    buildCmdkIndex();
+    cmdkInput.addEventListener('input', function(e){ renderCmdk(e.target.value); });
+    cmdkInput.addEventListener('keydown', function(e){
+      if(e.key === 'ArrowDown'){ e.preventDefault(); setCmdkActive(cmdkActiveIdx + 1); }
+      else if(e.key === 'ArrowUp'){ e.preventDefault(); setCmdkActive(cmdkActiveIdx - 1); }
+      else if(e.key === 'Enter'){ e.preventDefault(); pickCmdk(); }
+      else if(e.key === 'Escape'){ closeCmdk(); }
+    });
+    cmdkList.addEventListener('click', function(e){
+      var item = e.target.closest('.cmdk-item');
+      if(!item) return;
+      cmdkActiveIdx = +item.dataset.idx;
+      pickCmdk();
+    });
+    cmdk.addEventListener('click', function(e){
+      if(e.target === cmdk) closeCmdk();
+    });
+    if(cmdkBtn) cmdkBtn.addEventListener('click', openCmdk);
+    document.addEventListener('keydown', function(e){
+      if((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k'){
+        e.preventDefault();
+        if(cmdk.classList.contains('open')) closeCmdk();
+        else openCmdk();
+      }
+      if(e.key === '/' && !cmdk.classList.contains('open')){
+        var tag = document.activeElement && document.activeElement.tagName;
+        if(tag !== 'INPUT' && tag !== 'TEXTAREA'){ e.preventDefault(); openCmdk(); }
+      }
+      if(e.key === 'Escape' && cmdk.classList.contains('open')) closeCmdk();
+    });
+  }
+
+  /* Init */
+  onScroll();
+
+  if(window.location.hash){
+    var hashId = window.location.hash.slice(1);
+    if(document.getElementById(hashId)){
+      window.addEventListener('load', function(){
+        setTimeout(function(){ scrollToId(hashId); }, 50);
+      });
+    }
+  }
+})();
+</script>
+
+</body>
+</html>
